@@ -14,4 +14,21 @@ public class Avion {
 	
 	private String naziv;
 	private short kapacitet;
+	
+	public Integer getId() {
+		return id;
+	}
+	
+	public String getNaziv() {
+		return naziv;
+	}
+	public void setNaziv(String naziv) {
+		this.naziv = naziv;
+	}
+	public short getKapacitet() {
+		return kapacitet;
+	}
+	public void setKapacitet(short kapacitet) {
+		this.kapacitet = kapacitet;
+	}
 }
