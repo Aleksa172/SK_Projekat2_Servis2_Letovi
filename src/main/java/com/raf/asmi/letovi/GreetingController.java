@@ -1,5 +1,6 @@
 package com.raf.asmi.letovi;
 
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +28,21 @@ public class GreetingController {
 	@GetMapping("/test")
 	public String test(@RequestParam(value = "name", defaultValue = "123") String name) {
 		Let l = new Let();
-		l.setTrajanjeLeta((short) 30);
+		l.setPocetnaDestinacija("Stockholm");
+		l.setKrajnjaDestinacija("New York");
+		l.setTrajanjeLeta((short) 340);
 		letRepository.save(l);
 		
 		
 		return "Hello";
+	}
+	
+	@GetMapping("/test2")
+	public HashMap<String,String> test2() {
+		HashMap<String, String> map = new HashMap<>();
+		map.put("key1", "val1");
+		map.put("key2", "val2");
+		return map;
 	}
 	
 }
