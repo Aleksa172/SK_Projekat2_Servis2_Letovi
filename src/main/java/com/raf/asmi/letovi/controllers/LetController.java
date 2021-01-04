@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
+import javax.jms.Queue;
 import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -21,6 +22,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,6 +44,10 @@ public class LetController {
 	private LetRepository letRepository;
 	@Autowired
 	private AvionRepository avionRepository;
+	@Autowired
+	private JmsTemplate jmsTemplate;
+	@Autowired
+	private Queue obrisanLetQueue;
 
 	@GetMapping("/letovi")
 	public HashMap<String, Object> getDostupneLetove(
@@ -172,6 +178,10 @@ public class LetController {
 		}
 		
 		Let let = lTemp.get();
+		// Da li je let vec obrisan?
+		if(let.getStatus().equals(LetStatus.CANCELLED)) {
+			throw new ResponseStatusException(HttpStatus.GONE, "Let je vec uklonjen");
+		}
 		// Provera da li je prodata karta
 		// Ukoliko je broj mesta manji od mogucih mesta na avionu - neka karta je prodata
 		if(let.preostaloMesta() < let.getAvion().getKapacitet()) {
@@ -179,6 +189,7 @@ public class LetController {
 			// Javiti servisu1 i servisu3
 			let.setStatus(LetStatus.CANCELLED);
 			letRepository.save(let);
+			jmsTemplate.convertAndSend(obrisanLetQueue, let.getId()+"");
 		}
 		// U suprotnom nije nista prodato, samo obrisi let
 		else {

@@ -4,8 +4,11 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javax.jms.Queue;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +28,10 @@ public class GreetingController {
 	private LetRepository letRepository;
 	@Autowired
 	private AvionRepository avionRepository;
+	@Autowired
+	private JmsTemplate jmsTemplate;
+	@Autowired
+	private Queue testQueue;
 
 
 	@GetMapping("/greeting")
@@ -71,4 +78,9 @@ public class GreetingController {
 		return s;
 	}
 	
+	@GetMapping("/test-message")
+	public String test4(@RequestParam(value="msg", defaultValue="undefined-msg") String msg){
+		jmsTemplate.convertAndSend(testQueue, msg);
+		return "ok";
+	}
 }
