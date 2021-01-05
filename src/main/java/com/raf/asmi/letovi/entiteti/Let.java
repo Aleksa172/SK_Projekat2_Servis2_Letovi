@@ -67,6 +67,9 @@ public class Let {
 	public void setStatus(LetStatus status) {
 		this.status = status;
 	}
+	public short getTrenutnoZauzeto() {
+		return trenutnoZauzeto;
+	}
 	
 	public Short preostaloMesta(){
 		if(this.avion == null){

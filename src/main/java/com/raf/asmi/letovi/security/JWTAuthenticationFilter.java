@@ -32,7 +32,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		try {
 
 			// Dobiti podatke uvek - nasi su vestacki
-			//Login_Form user = new ObjectMapper().readValue(req.getInputStream(), Login_Form.class);
+			// Login_Form user = new ObjectMapper().readValue(req.getInputStream(), Login_Form.class);
 
 			/*UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getEmail(),
 					user.getPassword(), Collections.emptyList());*/

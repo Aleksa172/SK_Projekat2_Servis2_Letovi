@@ -40,7 +40,8 @@ public class LetRepositoryImpl extends SimpleJpaRepository<Let, Integer> impleme
 				"AND (COALESCE(null, :trajanjeOd) is NULL or l.trajanjeLeta >= :trajanjeOd) "+
 				"AND (COALESCE(null, :trajanjeDo) is NULL or l.trajanjeLeta <= :trajanjeDo) "+
 				"AND (COALESCE(null, :cenaOd) is NULL or l.cena >= :cenaOd) "+
-				"AND (COALESCE(null, :cenaDo) is NULL or l.cena <= :cenaDo) ", Let.class);
+				"AND (COALESCE(null, :cenaDo) is NULL or l.cena <= :cenaDo) "+ 
+				"AND (COALESCE(null, :avion) is NULL or l.avion = :avion)", Let.class);
 		q.setFirstResult(from);
 		q.setMaxResults(count);
 		
@@ -54,6 +55,7 @@ public class LetRepositoryImpl extends SimpleJpaRepository<Let, Integer> impleme
 		q.setParameter("trajanjeDo", filterParams.get("trajanjeDo"));
 		q.setParameter("cenaOd", filterParams.get("cenaOd"));
 		q.setParameter("cenaDo", filterParams.get("cenaDo"));
+		q.setParameter("avion", avionFilter);
 		
 		
 		return q.getResultList();
@@ -67,7 +69,8 @@ public class LetRepositoryImpl extends SimpleJpaRepository<Let, Integer> impleme
 				"AND (COALESCE(null, :trajanjeOd) is NULL or l.trajanjeLeta >= :trajanjeOd) "+
 				"AND (COALESCE(null, :trajanjeDo) is NULL or l.trajanjeLeta <= :trajanjeDo) "+
 				"AND (COALESCE(null, :cenaOd) is NULL or l.cena >= :cenaOd) "+
-				"AND (COALESCE(null, :cenaDo) is NULL or l.cena <= :cenaDo) ");
+				"AND (COALESCE(null, :cenaDo) is NULL or l.cena <= :cenaDo) "+
+				"AND (COALESCE(null, :avion) is NULL or l.avion = :avion)");
 		
 		q.setParameter("pocetnaDestinacija", filterParams.get("pocetnaDestinacija"));
 		q.setParameter("krajnjaDestinacija", filterParams.get("krajnjaDestinacija"));
@@ -75,6 +78,7 @@ public class LetRepositoryImpl extends SimpleJpaRepository<Let, Integer> impleme
 		q.setParameter("trajanjeDo", filterParams.get("trajanjeDo"));
 		q.setParameter("cenaOd", filterParams.get("cenaOd"));
 		q.setParameter("cenaDo", filterParams.get("cenaDo"));
+		q.setParameter("avion", avionFilter);
 		
 		return (Long) q.getSingleResult();
 	}

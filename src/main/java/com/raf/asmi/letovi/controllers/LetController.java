@@ -48,6 +48,8 @@ public class LetController {
 	private JmsTemplate jmsTemplate;
 	@Autowired
 	private Queue obrisanLetQueue;
+	@Autowired
+	private Queue obrisanLetS1Queue;
 
 	@GetMapping("/letovi")
 	public HashMap<String, Object> getDostupneLetove(
@@ -58,7 +60,19 @@ public class LetController {
 			@RequestParam(value = "cenaOd", required = false) Double cenaOd,
 			@RequestParam(value = "cenaDo", required = false) Double cenaDo,
 			@RequestParam(value = "trajanjeOd", required = false) Short trajanjeOd,
-			@RequestParam(value = "trajanjeDo", required = false) Short trajanjeDo) {
+			@RequestParam(value = "trajanjeDo", required = false) Short trajanjeDo,
+			@RequestParam(value = "avionId", required = false) Integer avionId) {
+		
+		
+		Avion avion = null;
+		// Filtracija po avionu
+		if(avionId != null) {
+			Optional<Avion> aTemp = avionRepository.findById(avionId);
+			if(!aTemp.isPresent()) {
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Trazeni avion ne postoji");
+			}
+			avion = aTemp.get();
+		}
 		
 		HashMap<String, Object> params = new HashMap<>();
 		if(pocetnaDestinacija != null){
@@ -82,8 +96,8 @@ public class LetController {
 		
 		
 		HashMap<String, Object> result = new HashMap<>();
-		result.put("data", letRepository.getDostupneLetove(from, count, null, params));
-		result.put("total_count", letRepository.getFilteredTotalRows(null, params));
+		result.put("data", letRepository.getDostupneLetove(from, count, avion, params));
+		result.put("total_count", letRepository.getFilteredTotalRows(avion, params));
 		
 		return result;
 		
@@ -190,6 +204,7 @@ public class LetController {
 			let.setStatus(LetStatus.CANCELLED);
 			letRepository.save(let);
 			jmsTemplate.convertAndSend(obrisanLetQueue, let.getId()+"");
+			jmsTemplate.convertAndSend(obrisanLetS1Queue, let.getId()+"");
 		}
 		// U suprotnom nije nista prodato, samo obrisi let
 		else {
