@@ -83,4 +83,9 @@ public class GreetingController {
 		jmsTemplate.convertAndSend(testQueue, msg);
 		return "ok";
 	}
+	
+	@GetMapping("/test-login")
+	public String test5() {
+		return "";
+	}
 }
