@@ -22,6 +22,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,7 +53,7 @@ public class LetController {
 	private Queue obrisanLetS1Queue;
 
 	@GetMapping("/letovi")
-	public HashMap<String, Object> getDostupneLetove(
+	public ResponseEntity<HashMap<String, Object>> getDostupneLetove(
 			@RequestParam(value = "from", defaultValue = "0") Integer from,
 			@RequestParam(value = "count", defaultValue = "10") Integer count,
 			@RequestParam(value = "pocetnaDestinacija", required = false) String pocetnaDestinacija,
@@ -69,7 +70,9 @@ public class LetController {
 		if(avionId != null) {
 			Optional<Avion> aTemp = avionRepository.findById(avionId);
 			if(!aTemp.isPresent()) {
-				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Trazeni avion ne postoji");
+				HashMap<String, Object> result = new HashMap<>();
+				result.put("message", "Trazeni avion ne postoji");
+				return new ResponseEntity(result, HttpStatus.NOT_FOUND);
 			}
 			avion = aTemp.get();
 		}
@@ -98,8 +101,7 @@ public class LetController {
 		HashMap<String, Object> result = new HashMap<>();
 		result.put("data", letRepository.getDostupneLetove(from, count, avion, params));
 		result.put("total_count", letRepository.getFilteredTotalRows(avion, params));
-		
-		return result;
+		return new ResponseEntity(result, HttpStatus.OK);
 		
 	}
 	
