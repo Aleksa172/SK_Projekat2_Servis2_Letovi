@@ -206,7 +206,6 @@ public class LetController {
 			let.setStatus(LetStatus.CANCELLED);
 			letRepository.save(let);
 			jmsTemplate.convertAndSend(obrisanLetQueue, let.getId()+"");
-			jmsTemplate.convertAndSend(obrisanLetS1Queue, let.getId()+"");
 		}
 		// U suprotnom nije nista prodato, samo obrisi let
 		else {
