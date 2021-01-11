@@ -30,7 +30,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 		/*http.cors().and().csrf().disable().authorizeRequests().antMatchers(SecurityConstants.LETOVI_PATH, SecurityConstants.LOGIN_PATH).permitAll()
 			.anyRequest().authenticated().and().addFilter(new JWTAuthorizationFilter(authenticationManager())).sessionManagement()
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS);*/
-		http.cors().and().csrf().disable().authorizeRequests().antMatchers(SecurityConstants.LETOVI_PATH).permitAll()
+		http.cors().and().csrf().disable().authorizeRequests().antMatchers(SecurityConstants.LETOVI_PATH, SecurityConstants.AVIONI_PATH).permitAll()
 		.anyRequest().authenticated().and().addFilter(new JWTAuthenticationFilter(authenticationManager()))
 		.addFilter(new JWTAuthorizationFilter(authenticationManager())).sessionManagement()
 		.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
