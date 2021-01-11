@@ -27,16 +27,20 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.raf.asmi.letovi.entiteti.Avion;
 import com.raf.asmi.letovi.entiteti.Let;
 import com.raf.asmi.letovi.entiteti.LetStatus;
 import com.raf.asmi.letovi.repository.AvionRepository;
 import com.raf.asmi.letovi.repository.LetRepository;
 import com.raf.asmi.letovi.repository.impl.LetRepositoryImpl;
+import com.raf.asmi.letovi.security.SecurityConstants;
 
 @RestController
 public class LetController {
@@ -111,7 +115,7 @@ public class LetController {
 		return letRepository.findById(id);
 	}
 	
-	// DODATI ZASTITU!
+	
 	@GetMapping("/let/{id}/preostalo-mesta")
 	public Short getPreostaloMesta(@PathVariable(required = true) Integer id) {
 		Optional<Let> lTemp = letRepository.findById(id);
@@ -121,7 +125,6 @@ public class LetController {
 		return lTemp.get().preostaloMesta();
 	}
 	
-	// DODATI ZASTITU!
 	@PostMapping("/let/{id}/zauzmi-mesta")
 	public Short zauzmiMesto(@PathVariable(required = true) Integer id,
 			@RequestParam(value = "broj", defaultValue = "1") Short count) {
@@ -140,7 +143,7 @@ public class LetController {
 		return preostaloNakon;
 	}
 	
-	// DODATI ZASTITU!
+	
 	@PostMapping("/let/{id}/oslobodi-mesta")
 	public Short oslobodiMesto(@PathVariable(required = true) Integer id,
 			@RequestParam(value = "broj", defaultValue = "1") Short count) {
@@ -154,13 +157,21 @@ public class LetController {
 		return preostaloNakon;
 	}
 	
-	// DODATI ZASTITU!
 	@PostMapping("/napravi-let")
 	public String napraviLet(@RequestParam(value = "pocetnaDestinacija", required = true) String pocetnaDestinacija,
 			@RequestParam(value = "krajnjaDestinacija", required = true) String krajnjaDestinacija,
 			@RequestParam(value = "cena", required = true) Double cena,
 			@RequestParam(value = "duzina", required = true) Short duzinaLeta,
-			@RequestParam(value = "avion_id", required = true) Integer avionId){
+			@RequestParam(value = "avion_id", required = true) Integer avionId,
+			@RequestHeader(value = SecurityConstants.HEADER_STRING) String token){
+		String role = JWT.require(Algorithm.HMAC512(SecurityConstants.SECRET.getBytes())).build()
+				.verify(token.replace(SecurityConstants.TOKEN_PREFIX, "")).getClaim("role").asString();
+
+		// Zabrani svima koji nisu admini
+		if(!role.equals("ADMIN")) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Ova strana je dozvoljena samo adminima");
+		}
+		
 		if(cena<0){
 			throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,"Cena ne moze biti negativna");
 		}
@@ -185,9 +196,17 @@ public class LetController {
 		return "ok";
 	}
 	
-	// DODATI ZASTITU!
 	@PostMapping("/ukloni-let/{id}")
-	public String ukloniLet(@PathVariable(required = true) Integer id){
+	public String ukloniLet(@PathVariable(required = true) Integer id,
+			@RequestHeader(value = SecurityConstants.HEADER_STRING) String token){
+		String role = JWT.require(Algorithm.HMAC512(SecurityConstants.SECRET.getBytes())).build()
+				.verify(token.replace(SecurityConstants.TOKEN_PREFIX, "")).getClaim("role").asString();
+
+		// Zabrani svima koji nisu admini
+		if(!role.equals("ADMIN")) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Ova strana je dozvoljena samo adminima");
+		}
+		
 		Optional<Let> lTemp = letRepository.findById(id);
 		if(!lTemp.isPresent()){
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Let nije pronadjen");
@@ -218,39 +237,5 @@ public class LetController {
 		return "ok";
 	}
 	
-	
-	private void sendCancellationEmail(String destination, Let let) throws AddressException, MessagingException {
-		Properties prop = new Properties();
-		prop.put("mail.smtp.auth", true);
-		prop.put("mail.smtp.starttls.enable", "true");
-		prop.put("mail.smtp.host", "smtp.mailtrap.io");
-		prop.put("mail.smtp.port", "25");
-		prop.put("mail.smtp.ssl.trust", "smtp.mailtrap.io");
-		
-		Session session = Session.getInstance(prop, new Authenticator() {
-		    @Override
-		    protected PasswordAuthentication getPasswordAuthentication() {
-		        return new PasswordAuthentication("acdcb8aae49500", "f9513570a4444f");
-		    }
-		});
-		
-		Message message = new MimeMessage(session);
-		message.setFrom(new InternetAddress("noreply@skprojekat2.com"));
-		message.setRecipients(
-		  Message.RecipientType.TO, InternetAddress.parse(destination));
-		message.setSubject("Mail Subject");
 
-		String msg = "Vas let "+let.getPocetnaDestinacija()+" - "+let.getKrajnjaDestinacija()+" je nazalmost otkazan <br/>" +
-			"Uskoro ce vam biti povracen novac.";
-
-		MimeBodyPart mimeBodyPart = new MimeBodyPart();
-		mimeBodyPart.setContent(msg, "text/html");
-
-		Multipart multipart = new MimeMultipart();
-		multipart.addBodyPart(mimeBodyPart);
-
-		message.setContent(multipart);
-
-		Transport.send(message);
-	}
 }
