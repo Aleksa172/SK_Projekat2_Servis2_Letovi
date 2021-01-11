@@ -60,8 +60,8 @@ public class LetController {
 			@RequestParam(value = "krajnjaDestinacija", required = false) String krajnjaDestinacija,
 			@RequestParam(value = "cenaOd", required = false) Double cenaOd,
 			@RequestParam(value = "cenaDo", required = false) Double cenaDo,
-			@RequestParam(value = "trajanjeOd", required = false) Short trajanjeOd,
-			@RequestParam(value = "trajanjeDo", required = false) Short trajanjeDo,
+			@RequestParam(value = "duzinaOd", required = false) Short duzinaOd,
+			@RequestParam(value = "duzinaDo", required = false) Short duzinaDo,
 			@RequestParam(value = "avionId", required = false) Integer avionId) {
 		
 		
@@ -90,11 +90,11 @@ public class LetController {
 		if(cenaDo != null){
 			params.put("cenaOd", cenaDo);
 		}
-		if(trajanjeOd != null){
-			params.put("trajanjeOd", trajanjeOd);
+		if(duzinaOd != null){
+			params.put("duzinaOd", duzinaOd);
 		}
-		if(trajanjeDo != null){
-			params.put("trajanjeDo", trajanjeDo);
+		if(duzinaDo != null){
+			params.put("duzinaDo", duzinaDo);
 		}
 		
 		
@@ -159,12 +159,12 @@ public class LetController {
 	public String napraviLet(@RequestParam(value = "pocetnaDestinacija", required = true) String pocetnaDestinacija,
 			@RequestParam(value = "krajnjaDestinacija", required = true) String krajnjaDestinacija,
 			@RequestParam(value = "cena", required = true) Double cena,
-			@RequestParam(value = "trajanje", required = true) Short trajanjeLeta,
+			@RequestParam(value = "duzina", required = true) Short duzinaLeta,
 			@RequestParam(value = "avion_id", required = true) Integer avionId){
 		if(cena<0){
 			throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,"Cena ne moze biti negativna");
 		}
-		if(trajanjeLeta<0){
+		if(duzinaLeta<0){
 			throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,"Trajanje ne moze biti negativno");
 		}
 		Optional<Avion> aTemp = avionRepository.findById(avionId);
@@ -177,7 +177,7 @@ public class LetController {
 		l.setPocetnaDestinacija(pocetnaDestinacija);
 		l.setKrajnjaDestinacija(krajnjaDestinacija);
 		l.setCena(cena);
-		l.setTrajanjeLeta(trajanjeLeta);
+		l.setDuzinaLeta(duzinaLeta);
 		l.setAvion(aTemp.get());
 		l.setStatus(LetStatus.OPEN);
 		

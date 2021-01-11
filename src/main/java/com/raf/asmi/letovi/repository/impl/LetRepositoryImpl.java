@@ -37,8 +37,8 @@ public class LetRepositoryImpl extends SimpleJpaRepository<Let, Integer> impleme
 		Query q = this.em.createQuery("SELECT l FROM Let l " + 
 				"WHERE (COALESCE(null, :pocetnaDestinacija) is NULL or l.pocetnaDestinacija = :pocetnaDestinacija) "+
 				"AND (COALESCE(null, :krajnjaDestinacija) is NULL or l.krajnjaDestinacija = :krajnjaDestinacija) "+
-				"AND (COALESCE(null, :trajanjeOd) is NULL or l.trajanjeLeta >= :trajanjeOd) "+
-				"AND (COALESCE(null, :trajanjeDo) is NULL or l.trajanjeLeta <= :trajanjeDo) "+
+				"AND (COALESCE(null, :duzinaOd) is NULL or l.duzinaLeta >= :duzinaOd) "+
+				"AND (COALESCE(null, :duzinaDo) is NULL or l.duzinaLeta <= :duzinaDo) "+
 				"AND (COALESCE(null, :cenaOd) is NULL or l.cena >= :cenaOd) "+
 				"AND (COALESCE(null, :cenaDo) is NULL or l.cena <= :cenaDo) "+ 
 				"AND (COALESCE(null, :avion) is NULL or l.avion = :avion)", Let.class);
@@ -51,8 +51,8 @@ public class LetRepositoryImpl extends SimpleJpaRepository<Let, Integer> impleme
 		
 		q.setParameter("pocetnaDestinacija", filterParams.get("pocetnaDestinacija"));
 		q.setParameter("krajnjaDestinacija", filterParams.get("krajnjaDestinacija"));
-		q.setParameter("trajanjeOd", filterParams.get("trajanjeOd"));
-		q.setParameter("trajanjeDo", filterParams.get("trajanjeDo"));
+		q.setParameter("duzinaOd", filterParams.get("duzinaOd"));
+		q.setParameter("duzinaDo", filterParams.get("duzinaDo"));
 		q.setParameter("cenaOd", filterParams.get("cenaOd"));
 		q.setParameter("cenaDo", filterParams.get("cenaDo"));
 		q.setParameter("avion", avionFilter);
@@ -66,16 +66,16 @@ public class LetRepositoryImpl extends SimpleJpaRepository<Let, Integer> impleme
 		Query q = this.em.createQuery("SELECT count(l.id) FROM Let l " + 
 				"WHERE (COALESCE(null, :pocetnaDestinacija) is NULL or l.pocetnaDestinacija = :pocetnaDestinacija) "+
 				"AND (COALESCE(null, :krajnjaDestinacija) is NULL or l.krajnjaDestinacija = :krajnjaDestinacija) "+
-				"AND (COALESCE(null, :trajanjeOd) is NULL or l.trajanjeLeta >= :trajanjeOd) "+
-				"AND (COALESCE(null, :trajanjeDo) is NULL or l.trajanjeLeta <= :trajanjeDo) "+
+				"AND (COALESCE(null, :duzinaOd) is NULL or l.duzinaLeta >= :duzinaOd) "+
+				"AND (COALESCE(null, :duzinaDo) is NULL or l.duzinaLeta <= :duzinaDo) "+
 				"AND (COALESCE(null, :cenaOd) is NULL or l.cena >= :cenaOd) "+
 				"AND (COALESCE(null, :cenaDo) is NULL or l.cena <= :cenaDo) "+
 				"AND (COALESCE(null, :avion) is NULL or l.avion = :avion)");
 		
 		q.setParameter("pocetnaDestinacija", filterParams.get("pocetnaDestinacija"));
 		q.setParameter("krajnjaDestinacija", filterParams.get("krajnjaDestinacija"));
-		q.setParameter("trajanjeOd", filterParams.get("trajanjeOd"));
-		q.setParameter("trajanjeDo", filterParams.get("trajanjeDo"));
+		q.setParameter("duzinaOd", filterParams.get("duzinaOd"));
+		q.setParameter("duzinaDo", filterParams.get("duzinaDo"));
 		q.setParameter("cenaOd", filterParams.get("cenaOd"));
 		q.setParameter("cenaDo", filterParams.get("cenaDo"));
 		q.setParameter("avion", avionFilter);

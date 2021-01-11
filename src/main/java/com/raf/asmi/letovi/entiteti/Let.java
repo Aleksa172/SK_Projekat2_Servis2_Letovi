@@ -23,7 +23,7 @@ public class Let {
 	private Avion avion;
 	private String pocetnaDestinacija;
 	private String krajnjaDestinacija;
-	private short trajanjeLeta; // u minutama
+	private short duzinaLeta; // u km
 	private double cena; // u evrima
 	@Enumerated(EnumType.STRING) // Stanje leta - OPEN, CANCELLED
 	private LetStatus status;
@@ -49,11 +49,11 @@ public class Let {
 	public void setKrajnjaDestinacija(String krajnjaDestinacija) {
 		this.krajnjaDestinacija = krajnjaDestinacija;
 	}
-	public short getTrajanjeLeta() {
-		return trajanjeLeta;
+	public short getDuzinaLeta() {
+		return duzinaLeta;
 	}
-	public void setTrajanjeLeta(short trajanjeLeta) {
-		this.trajanjeLeta = trajanjeLeta;
+	public void setDuzinaLeta(short duzinaLeta) {
+		this.duzinaLeta = duzinaLeta;
 	}
 	public double getCena() {
 		return cena;
